@@ -1,0 +1,32 @@
+@startuml
+
+'abstract class AbstractList
+'abstract AbstractCollection
+
+interface List
+interface Collection implements List
+abstract class AbstractCollection implements Collection
+abstract class AbstractList extends AbstractCollection implements List
+
+
+'List <|-- AbstractList
+'Collection <|-- AbstractCollection
+'
+'Collection <|- List
+'AbstractCollection <|- AbstractList
+'AbstractList <|-- ArrayList
+
+'class ArrayList {
+'Object[] elementData
+'size()
+'}
+'
+'enum TimeUnit {
+'DAYS
+'HOURS
+'MINUTES
+'}
+
+
+
+@enduml

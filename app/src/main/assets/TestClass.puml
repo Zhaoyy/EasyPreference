@@ -1,0 +1,54 @@
+@startuml
+class Company{
+}
+
+class Department {
+  name: Name
+}
+
+class Office {
+  address : String
+  phone : Number
+}
+
+'class Headquarters {
+'}
+
+class Person {
+  name : Name
+  employeeId : Number
+  title : String
+  getPhoto() : Photo
+  getPhone() : Number
+  getContactInformation() : ContactInformation
+  getPersonalRecords() : PersonalRecords
+}
+
+class ContactInformation {
+  address : String
+}
+
+class PersonalRecords {
+  taxId
+  employeeHistory
+  salary
+}
+
+' company has more than one department
+Company "1" *-do- "1.." Department
+
+'company has department and office
+'(Department, Office) -up-* Company
+
+'Department "*" -ri- "*" Office : Location >
+
+Department o-ri- "n" Person
+
+'PersonalRecords --() IInformation
+
+Person ..> PersonalRecords
+Person ..> ContactInformation
+
+Department --> Office
+
+@enduml

@@ -1,17 +1,123 @@
 package com.zhaoyy.easypreference
 
+import android.graphics.Color
+import android.graphics.Rect
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import com.alibaba.android.vlayout.VirtualLayoutAdapter
+import com.alibaba.android.vlayout.VirtualLayoutManager
+import com.alibaba.android.vlayout.layout.*
 
 class MainActivity : AppCompatActivity() {
 
   private lateinit var data: PreferenceData
 
+  private lateinit var recyclerView: RecyclerView
+
+  private lateinit var vAdapter: VirtualLayoutAdapter<TextViewHolder>
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
+    testPreference()
+
+    initRecyclerView()
+
+    findViewById(R.id.btn_add_grid).setOnClickListener {
+      val count = vAdapter.itemCount
+      val layoutHelpers = vAdapter.layoutHelpers.toMutableList()
+      val lastHelper = layoutHelpers.last()
+      lastHelper.itemCount = lastHelper.itemCount + 1
+
+      vAdapter.layoutHelpers = layoutHelpers
+
+      recyclerView.adapter.notifyItemInserted(count)
+    }
+  }
+
+  private fun initRecyclerView() {
+    recyclerView = findViewById(R.id.recycler_view) as RecyclerView
+
+    val vLayoutManager = VirtualLayoutManager(this)
+    recyclerView.layoutManager = vLayoutManager
+
+    recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
+      override fun getItemOffsets(outRect: Rect, view: View?, parent: RecyclerView?,
+          state: RecyclerView.State?) {
+        outRect.set(10, 10, 10, 10)
+      }
+    })
+
+    val gridLayoutHelper = GridLayoutHelper(4, 10)
+    val scrollFixLayoutHelper = ScrollFixLayoutHelper(FixLayoutHelper.TOP_RIGHT, 100, 100)
+    scrollFixLayoutHelper.showType = ScrollFixLayoutHelper.SHOW_ON_ENTER
+
+    // column layout helper
+    val columnLayoutHelper = ColumnLayoutHelper()
+    columnLayoutHelper.setWeights(floatArrayOf(40f, 30f, 15f, 10f, 5f))
+    columnLayoutHelper.itemCount = 5
+
+    val onePlusN = OnePlusNLayoutHelper(4)
+
+    val stickLayout = StickyLayoutHelper(false)
+
+    vLayoutManager.setLayoutHelpers(
+        mutableListOf(DefaultLayoutHelper.newHelper(2), stickLayout, scrollFixLayoutHelper,
+            DefaultLayoutHelper.newHelper(2), gridLayoutHelper, stickLayout, columnLayoutHelper,
+            onePlusN))
+
+    vAdapter = object : VirtualLayoutAdapter<TextViewHolder>(vLayoutManager) {
+
+
+      override fun onBindViewHolder(holder: TextViewHolder, position: Int) {
+        val layoutParam = VirtualLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+            200)
+        holder.textView.text = position.toString()
+
+        if (position == 7) {
+          layoutParam.height = 100
+          layoutParam.width = 100
+        }
+
+        if (position > 35) {
+          holder.textView.setBackgroundColor(0x66cc0000 + (position - 30) * 128)
+        } else if (position % 2 == 0) {
+          holder.textView.setBackgroundColor(Color.GREEN)
+
+        } else {
+          holder.textView.setBackgroundColor(Color.RED)
+        }
+
+        holder.textView.layoutParams = layoutParam
+      }
+
+      override fun getItemCount(): Int {
+        var count = 0
+
+        layoutHelpers.forEach {
+          count += it.itemCount
+        }
+
+        return count
+      }
+
+      override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextViewHolder {
+        return TextViewHolder(TextView(parent.context))
+      }
+
+    }
+
+    recyclerView.adapter = vAdapter
+  }
+
+
+  private fun testPreference() {
     data = PreferenceData(applicationContext, prefName)
 
     data.name = "test name"
@@ -23,6 +129,6 @@ class MainActivity : AppCompatActivity() {
 
   companion object {
     val prefName = "preference"
-    val TAG = MainActivity::class.java.simpleName
+    val TAG = MainActivity::class.java.simpleName!!
   }
 }
