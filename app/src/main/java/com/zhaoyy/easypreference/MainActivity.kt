@@ -11,13 +11,19 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.alibaba.android.vlayout.VirtualLayoutAdapter
 import com.alibaba.android.vlayout.VirtualLayoutManager
-import com.alibaba.android.vlayout.layout.*
+import com.alibaba.android.vlayout.layout.ColumnLayoutHelper
+import com.alibaba.android.vlayout.layout.DefaultLayoutHelper
+import com.alibaba.android.vlayout.layout.FixLayoutHelper
+import com.alibaba.android.vlayout.layout.GridLayoutHelper
+import com.alibaba.android.vlayout.layout.OnePlusNLayoutHelper
+import com.alibaba.android.vlayout.layout.ScrollFixLayoutHelper
+import com.alibaba.android.vlayout.layout.StickyLayoutHelper
+import kotlinx.android.synthetic.main.activity_main.btn_add_grid
+import kotlinx.android.synthetic.main.activity_main.recycler_view
 
 class MainActivity : AppCompatActivity() {
 
   private lateinit var data: PreferenceData
-
-  private lateinit var recyclerView: RecyclerView
 
   private lateinit var vAdapter: VirtualLayoutAdapter<TextViewHolder>
 
@@ -29,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     initRecyclerView()
 
-    findViewById(R.id.btn_add_grid).setOnClickListener {
+    btn_add_grid.setOnClickListener {
       val count = vAdapter.itemCount
       val layoutHelpers = vAdapter.layoutHelpers.toMutableList()
       val lastHelper = layoutHelpers.last()
@@ -37,19 +43,22 @@ class MainActivity : AppCompatActivity() {
 
       vAdapter.layoutHelpers = layoutHelpers
 
-      recyclerView.adapter.notifyItemInserted(count)
+      recycler_view.adapter.notifyItemInserted(count)
     }
   }
 
   private fun initRecyclerView() {
-    recyclerView = findViewById(R.id.recycler_view) as RecyclerView
 
     val vLayoutManager = VirtualLayoutManager(this)
-    recyclerView.layoutManager = vLayoutManager
+    recycler_view.layoutManager = vLayoutManager
 
-    recyclerView.addItemDecoration(object : RecyclerView.ItemDecoration() {
-      override fun getItemOffsets(outRect: Rect, view: View?, parent: RecyclerView?,
-          state: RecyclerView.State?) {
+    recycler_view.addItemDecoration(object : RecyclerView.ItemDecoration() {
+      override fun getItemOffsets(
+        outRect: Rect,
+        view: View?,
+        parent: RecyclerView?,
+        state: RecyclerView.State?
+      ) {
         outRect.set(10, 10, 10, 10)
       }
     })
@@ -68,16 +77,23 @@ class MainActivity : AppCompatActivity() {
     val stickLayout = StickyLayoutHelper(false)
 
     vLayoutManager.setLayoutHelpers(
-        mutableListOf(DefaultLayoutHelper.newHelper(2), stickLayout, scrollFixLayoutHelper,
+        mutableListOf(
+            DefaultLayoutHelper.newHelper(2), stickLayout, scrollFixLayoutHelper,
             DefaultLayoutHelper.newHelper(2), gridLayoutHelper, stickLayout, columnLayoutHelper,
-            onePlusN))
+            onePlusN
+        )
+    )
 
     vAdapter = object : VirtualLayoutAdapter<TextViewHolder>(vLayoutManager) {
 
-
-      override fun onBindViewHolder(holder: TextViewHolder, position: Int) {
-        val layoutParam = VirtualLayoutManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-            200)
+      override fun onBindViewHolder(
+        holder: TextViewHolder,
+        position: Int
+      ) {
+        val layoutParam = VirtualLayoutManager.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            200
+        )
         holder.textView.text = position.toString()
 
         if (position == 7) {
@@ -85,13 +101,10 @@ class MainActivity : AppCompatActivity() {
           layoutParam.width = 100
         }
 
-        if (position > 35) {
-          holder.textView.setBackgroundColor(0x66cc0000 + (position - 30) * 128)
-        } else if (position % 2 == 0) {
-          holder.textView.setBackgroundColor(Color.GREEN)
-
-        } else {
-          holder.textView.setBackgroundColor(Color.RED)
+        when {
+          position > 35 -> holder.textView.setBackgroundColor(0x66cc0000 + (position - 30) * 128)
+          position % 2 == 0 -> holder.textView.setBackgroundColor(Color.GREEN)
+          else -> holder.textView.setBackgroundColor(Color.RED)
         }
 
         holder.textView.layoutParams = layoutParam
@@ -107,15 +120,17 @@ class MainActivity : AppCompatActivity() {
         return count
       }
 
-      override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextViewHolder {
+      override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+      ): TextViewHolder {
         return TextViewHolder(TextView(parent.context))
       }
 
     }
 
-    recyclerView.adapter = vAdapter
+    recycler_view.adapter = vAdapter
   }
-
 
   private fun testPreference() {
     data = PreferenceData(applicationContext, prefName)
@@ -128,7 +143,7 @@ class MainActivity : AppCompatActivity() {
   }
 
   companion object {
-    val prefName = "preference"
-    val TAG = MainActivity::class.java.simpleName!!
+    const val prefName = "preference"
+    val TAG = MainActivity::class.java.simpleName
   }
 }
