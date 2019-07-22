@@ -1,6 +1,6 @@
 package com.zhaoyy.easypreference
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.Gravity
 import android.widget.TextView
 
@@ -9,7 +9,7 @@ import android.widget.TextView
  * by ZHAOYY
  * on 2017/7/5.
  */
-class TextViewHolder(val textView: TextView) : RecyclerView.ViewHolder(textView) {
+class TextViewHolder(val textView: TextView) : androidx.recyclerview.widget.RecyclerView.ViewHolder(textView) {
 
   init {
     textView.gravity = Gravity.CENTER

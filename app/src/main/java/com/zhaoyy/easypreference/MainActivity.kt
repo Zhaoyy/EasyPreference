@@ -3,12 +3,13 @@ package com.zhaoyy.easypreference
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView.State
 import com.alibaba.android.vlayout.VirtualLayoutAdapter
 import com.alibaba.android.vlayout.VirtualLayoutManager
 import com.alibaba.android.vlayout.layout.ColumnLayoutHelper
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity() {
 
       vAdapter.layoutHelpers = layoutHelpers
 
-      recycler_view.adapter.notifyItemInserted(count)
+      recycler_view.adapter?.notifyItemInserted(count)
     }
   }
 
@@ -55,9 +56,9 @@ class MainActivity : AppCompatActivity() {
     recycler_view.addItemDecoration(object : RecyclerView.ItemDecoration() {
       override fun getItemOffsets(
         outRect: Rect,
-        view: View?,
-        parent: RecyclerView?,
-        state: RecyclerView.State?
+        view: View,
+        parent: RecyclerView,
+        state: State
       ) {
         outRect.set(10, 10, 10, 10)
       }
