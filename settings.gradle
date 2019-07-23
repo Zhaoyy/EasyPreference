@@ -1,1 +1,1 @@
-include ':app', ':easyproference'
+include ':app', ':easyproference', ':exts'
