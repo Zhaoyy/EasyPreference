@@ -29,6 +29,7 @@ dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
   implementation project(':easyproference')
+  implementation project(':exts')
 
   implementation ('com.alibaba.android:vlayout:1.0.9@aar') {
     transitive = true

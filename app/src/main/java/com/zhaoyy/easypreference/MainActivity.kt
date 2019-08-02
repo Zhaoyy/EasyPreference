@@ -3,12 +3,12 @@ package com.zhaoyy.easypreference
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.State
 import com.alibaba.android.vlayout.VirtualLayoutAdapter
 import com.alibaba.android.vlayout.VirtualLayoutManager
@@ -19,6 +19,8 @@ import com.alibaba.android.vlayout.layout.GridLayoutHelper
 import com.alibaba.android.vlayout.layout.OnePlusNLayoutHelper
 import com.alibaba.android.vlayout.layout.ScrollFixLayoutHelper
 import com.alibaba.android.vlayout.layout.StickyLayoutHelper
+import com.zhaoyy.kotlin.ext.coroutine.loadAsync
+import com.zhaoyy.kotlin.ext.coroutine.then
 import kotlinx.android.synthetic.main.activity_main.btn_add_grid
 import kotlinx.android.synthetic.main.activity_main.recycler_view
 
@@ -141,6 +143,21 @@ class MainActivity : AppCompatActivity() {
 
     Log.e(TAG, "name = ${data.name}")
     Log.e(TAG, "number = ${data.number}")
+  }
+
+  private fun coroutineExceptionHandler() {
+    loadAsync {
+      "data"
+    }.then({
+
+    }, {
+
+    })
+
+    loadAsync { } then { t, e ->
+      "data is $t"
+      "error is $e"
+    }
   }
 
   companion object {

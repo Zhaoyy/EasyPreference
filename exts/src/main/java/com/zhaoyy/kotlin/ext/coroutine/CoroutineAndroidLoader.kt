@@ -56,3 +56,16 @@ infix fun <T> Deferred<T>.then(block: suspend (T?, Throwable?) -> Unit): Job {
   }
 }
 
+fun <T> Deferred<T>.then(
+  block: suspend (T) -> Unit,
+  handler: (Throwable) -> Unit
+): Job {
+  return GlobalScope.launch(context = Dispatchers.Main) {
+    try {
+      block(this@then.await())
+    } catch (e: Exception) {
+      handler(e)
+    }
+  }
+}
+
